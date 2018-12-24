@@ -9,10 +9,10 @@
 
 var express = require('express'); // Express web server framework
 var request = require('request'); // "Request" library
-var secret = require('./secret');
 var cors = require('cors');
 var querystring = require('querystring');
 var cookieParser = require('cookie-parser');
+var secret = require('./secret'); // Put client_secret key in here
 
 var client_id = '5453a49811cd4b9686761335b0d9adfb';
 var client_secret = secret.client_secret;
@@ -47,7 +47,7 @@ app.get('/login', function(req, res) {
   res.cookie(stateKey, state);
 
   // your application requests authorization
-  var scope = 'user-read-private user-read-email';
+  var scope = 'user-read-private user-read-email user-top-read';
   res.redirect('https://accounts.spotify.com/authorize?' +
     querystring.stringify({
       response_type: 'code',
@@ -100,8 +100,11 @@ app.get('/callback', function(req, res) {
         };
 
         // use the access token to access the Spotify Web API
-        request.get(options, function(error, response, body) {
-          console.log(body);
+          request.get(options, function(error, response, body) {
+	      console.log(options)
+	      console.log('==================================================');
+              console.log(body);
+	      console.log('==================================================');
         });
 
         // we can also pass the token to the browser to make requests from there
