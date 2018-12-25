@@ -38,7 +38,7 @@
 		    energyAvg += features[i].energy;
 		    if (features[i].instrumentalness > .7 ) {
 			instrumentalCount++;
-			console.log(i+1);
+			console.log(i+1); // temp - to see which songs are marked as instrumental
 		    }
 		}
 
