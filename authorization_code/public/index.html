@@ -1,9 +1,9 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
     <head>
 	<title>Spotify User Info</title>
-	<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
-	<style type="text/css">
+	<link rel='stylesheet' href='//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css'>
+	<style type='text/css'>
 	 #login, #loggedin {
              display: none;
 	 }
@@ -17,56 +17,62 @@
     </head>
 
     <body>
-	<div class="container">
-	    <div id="login">
+	<div class='container'>
+	    <div id='login'>
 		<h1>This is an example of the Authorization Code flow</h1>
-		<a href="/login" class="btn btn-primary">Log in with Spotify</a>
+		<a href='/login' class='btn btn-primary'>Log in with Spotify</a>
 	    </div>
-	    <div id="loggedin">
-		<div id="user-profile">
+	    <div id='loggedin'>
+		<div id='user-profile'>
 		</div>
-		<div id="oauth">
+		<div id='features'>
 		</div>
-		<button class="btn btn-default" id="obtain-new-token">Obtain new token using the refresh token</button>
+		<div id='oauth'>
+		</div>
+		<button class='btn btn-default' id='obtain-new-token'>Obtain new token using the refresh token</button>
 	    </div>
 	</div>
 
-	<script id="user-profile-template" type="text/x-handlebars-template">
-	    <h1>Logged in as {{display_name}}</h1>
-	    <div class="media">
-		<div class="pull-left">
-		    <img class="media-object" width="150" src="{{images.0.url}}" />
+	<script id='user-profile-template' type='text/x-handlebars-template'>
+	    <h1>Top Artists and Songs</h1>
+	    <div class='media'>
+		<div class='pull-left'>
+		    <img class='media-object' width='150' src='{{images.0.url}}' />
 		</div>
-		<div class="media-body">
-		    <dl class="dl-horizontal">
-			<dt>top tracks - medium term</dt>
+		<div class='media-body'>
+		    <dl class='dl-horizontal'>
+			<dt>top tracks - long term</dt>
 			<br>
 			<ol>
 			    {{#each items}}
 			    <li>{{this.name}} - {{this.artists.0.name}}</li>
 			    {{/each}}
 			</ol>
-			<dt>Display name</dt><dd class="clearfix">{{display_name}}</dd>
-			<dt>Id</dt><dd>{{id}}</dd>
-			<dt>Email</dt><dd>{{email}}</dd>
-			<dt>Spotify URI</dt><dd><a href="{{external_urls.spotify}}">{{external_urls.spotify}}</a></dd>
-			<dt>Link</dt><dd><a href="{{href}}">{{href}}</a></dd>
-			<dt>Profile Image</dt><dd class="clearfix"><a href="{{images.0.url}}">{{images.0.url}}</a></dd>
 		    </dl>
 		</div>
 	    </div>
 	</script>
 
-	<script id="oauth-template" type="text/x-handlebars-template">
-	    <h2>oAuth info</h2>
-	    <dl class="dl-horizontal">
-		<dt>Access token</dt><dd class="text-overflow">{{access_token}}</dd>
-		<dt>Refresh token</dt><dd class="text-overflow">{{refresh_token}}</dd>
+	<script id='features-template' type='text/x-handlebars-template'>
+	    <h2>Audio analysis</h2>
+	    <dl class='dl-horizontal'>
+		<dt>Valence</dt><dd>{{valence}}</dd>
+		<dt>Danceability</dt><dd>{{danceability}}</dd>
+		<dt>Energy</dt><dd>{{energy}}</dd>
+		<dt>Instrumental Songs</dt><dd>{{instrumentals}}</dd>
+	    </dl>
+	</script>
+	
+	<script id='oauth-template' type='text/x-handlebars-template'>
+	    <h3>oAuth info</h3>
+	    <dl class='dl-horizontal'>
+		<dt>Access token</dt><dd class='text-overflow'>{{access_token}}</dd>
+		<dt>Refresh token</dt><dd class='text-overflow'>{{refresh_token}}</dd>
 	    </dl>
 	</script>
 
-	<script src="//cdnjs.cloudflare.com/ajax/libs/handlebars.js/2.0.0-alpha.1/handlebars.min.js"></script>
-	<script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
+	<script src='//cdnjs.cloudflare.com/ajax/libs/handlebars.js/2.0.0-alpha.1/handlebars.min.js'></script>
+	<script src='http://code.jquery.com/jquery-1.10.1.min.js'></script>
 	<script src='scripts/info.js'></script>
     </body>
 </html>
