@@ -14,6 +14,33 @@
 	return hashParams;
     }
 
+    //trying to make requests more modular
+    //deal with later
+    /*
+      const ARTISTS = 'artists';
+      const TRACKS = 'tracks';
+      
+      const LONG = 'long_term';
+      const MEDIUM = 'medium_term';
+      const SHORT = 'short_term';
+
+      // type: ARTISTS, TRACKS
+      // term: LONG, MEDIUM, SHORT
+      // limit: int range 0-50
+      function topTracks(type, term, limit) {
+      $.ajax({
+      url: 'https://api.spotify.com/v1/me/top/' + type + '?time_range=' + term + '&limit=' + limit,
+      headers: {
+      'Authorization': 'Bearer ' + access_token
+      },
+      success: function(response) {
+      $('#login').hide();
+      $('#loggedin').show();
+      }
+      })
+      }
+    */
+
     // gets song features for top songs and
     // songids is a comma separated string 
     function getSongFeatures(songids, access_tok) {
@@ -54,22 +81,23 @@
 	});
     }
     
-    let userProfileSource = document.getElementById('user-profile-template').innerHTML,
-	userProfileTemplate = Handlebars.compile(userProfileSource),
-	userProfilePlaceholder = document.getElementById('user-profile');
+    let listSource = document.getElementById('list-template').innerHTML,
+	listTemplate = Handlebars.compile(listSource),
+	shortTermPlaceholder = document.getElementById('short-term'),
+	mediumTermPlaceholder = document.getElementById('medium-term'),
+	longTermPlaceholder = document.getElementById('long-term');
 
-    var featuresSource = document.getElementById('features-template').innerHTML,
+    let featuresSource = document.getElementById('features-template').innerHTML,
 	featuresTemplate = Handlebars.compile(featuresSource),
 	featuresPlaceholder = document.getElementById('features');
     
-    var oauthSource = document.getElementById('oauth-template').innerHTML,
+    let oauthSource = document.getElementById('oauth-template').innerHTML,
 	oauthTemplate = Handlebars.compile(oauthSource),
 	oauthPlaceholder = document.getElementById('oauth');
-
     
-    var params = getHashParams();
+    let params = getHashParams();
 
-    var access_token = params.access_token,
+    let access_token = params.access_token,
 	refresh_token = params.refresh_token,
 	error = params.error;
 
@@ -77,22 +105,50 @@
 	alert('There was an error during the authentication');
     } else {
 	if (access_token) {
-	    // render oauth info
+ 	    // render oauth info
 	    oauthPlaceholder.innerHTML = oauthTemplate({
 		access_token: access_token,
 		refresh_token: refresh_token
 	    });
 
-	    // Request to spotify using access_token
+	    // Short term request
 	    $.ajax({
-		url: 'https://api.spotify.com/v1/me/top/tracks?time_range=long_term&limit=50',  // Need to modify this
+		url: 'https://api.spotify.com/v1/me/top/tracks?time_range=short_term&limit=50',  // Need to modify this
 		headers: {
 		    'Authorization': 'Bearer ' + access_token
 		},
 		success: function(response) {
 		    // handlebars object getting used here from above
 		    // with the data from the api call
-		    userProfilePlaceholder.innerHTML = userProfileTemplate(response);
+		    shortTermPlaceholder.innerHTML = listTemplate(response);
+		    $('#short-term').hide();
+		}
+	    });
+	    
+	    // Medium term request
+	    $.ajax({
+		url: 'https://api.spotify.com/v1/me/top/tracks?time_range=medium_term&limit=50',
+		headers: {
+		    'Authorization': 'Bearer ' + access_token
+		},
+		success: function(response) {
+		    // handlebars object getting used here from above
+		    // with the data from the api call
+		    mediumTermPlaceholder.innerHTML = listTemplate(response);
+		    $('#medium-term').hide();
+		}
+	    });
+	    
+	    // Long term request
+	    $.ajax({
+		url: 'https://api.spotify.com/v1/me/top/tracks?time_range=long_term&limit=50',
+		headers: {
+		    'Authorization': 'Bearer ' + access_token
+		},
+		success: function(response) {
+		    // handlebars object getting used here from above
+		    // with the data from the api call
+		    longTermPlaceholder.innerHTML = listTemplate(response);
 
 		    let topSongs = response.items;
 		    console.log(topSongs); // temporary
@@ -105,7 +161,7 @@
 		    console.log(idList) // temporary
 		    // request to get song information
 		    getSongFeatures(idList, access_token);
-		    		    		    
+		    
 		    $('#login').hide();
 		    $('#loggedin').show();
 		}
@@ -116,6 +172,24 @@
 	    $('#loggedin').hide();
 	}
 
+	document.getElementById('short-toggle').addEventListener('click', function () {
+	    $('#medium-term').hide();
+	    $('#long-term').hide();
+	    $('#short-term').show();
+	});
+	
+	document.getElementById('medium-toggle').addEventListener('click', function () {
+	    $('#short-term').hide();
+	    $('#long-term').hide();
+	    $('#medium-term').show();
+	});
+
+	document.getElementById('long-toggle').addEventListener('click', function () {
+	    $('#short-term').hide();
+	    $('#medium-term').hide();
+	    $('#long-term').show();
+	});	
+	
 	document.getElementById('obtain-new-token').addEventListener('click', function() {
 	    $.ajax({
 		url: '/refresh_token',
