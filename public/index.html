@@ -39,7 +39,7 @@
 	</div>
 
 	<script id='list-template' type='text/x-handlebars-template'>
-	    <h1>Top Artists and Songs</h1>
+	    <h1>Top {{total}} Songs</h1>
 	    <div class='media'>
 		<div class='pull-left'>
 		    <img class='media-object' width='150' src='{{images.0.url}}'/>
@@ -56,6 +56,24 @@
 	    </div>
 	</script>
 
+	<script id='artists-template' type='text/x-handlebars-template'>
+	    <h1>Top {{total}} Songs</h1>
+	    <div class='media'>
+		<div class='pull-left'>
+		    <img class='media-object' width='150' src='{{images.0.url}}'/>
+		</div>
+		<div class='media-body'>
+		    <dl class='dl-horizontal'>
+			<ol>
+			    {{#each items}}
+			    <li>{{this.name}} - {{this.artists.0.name}}</li>
+			    {{/each}}
+			</ol>
+		    </dl>
+		</div>
+	    </div>
+	</script>	
+	
 	<script id='features-template' type='text/x-handlebars-template'>
 	    <h2>Audio analysis</h2>
 	    <dl class='dl-horizontal'>

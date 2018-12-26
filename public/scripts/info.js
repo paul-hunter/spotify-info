@@ -14,32 +14,32 @@
 	return hashParams;
     }
 
-    //trying to make requests more modular
-    //deal with later
-    /*
-      const ARTISTS = 'artists';
-      const TRACKS = 'tracks';
-      
-      const LONG = 'long_term';
-      const MEDIUM = 'medium_term';
-      const SHORT = 'short_term';
+    const ARTISTS = 'artists';
+    const TRACKS = 'tracks';
+    
+    const LONG = 'long_term';
+    const MEDIUM = 'medium_term';
+    const SHORT = 'short_term';
 
-      // type: ARTISTS, TRACKS
-      // term: LONG, MEDIUM, SHORT
-      // limit: int range 0-50
-      function topTracks(type, term, limit) {
-      $.ajax({
-      url: 'https://api.spotify.com/v1/me/top/' + type + '?time_range=' + term + '&limit=' + limit,
-      headers: {
-      'Authorization': 'Bearer ' + access_token
-      },
-      success: function(response) {
-      $('#login').hide();
-      $('#loggedin').show();
-      }
-      })
-      }
-    */
+    // type: ARTISTS, TRACKS
+    // term: LONG, MEDIUM, SHORT
+    // limit: int range 0-50
+    // offset: int range 0-49 it appears
+    function getTop(access_token, type, term, limit, offset) {
+	return $.ajax({
+	    url: 'https://api.spotify.com/v1/me/top/' + type + '?time_range=' + term + '&limit=' + limit + '&offset=' + offset,
+	    headers: {
+		'Authorization': 'Bearer ' + access_token
+	    },
+	    /*
+	    success: function(response) {
+		$('#login').hide();
+		$('#loggedin').show();
+	    }
+	    */
+	});
+    }
+
 
     // gets song features for top songs and
     // songids is a comma separated string 
@@ -112,60 +112,36 @@
 	    });
 
 	    // Short term request
-	    $.ajax({
-		url: 'https://api.spotify.com/v1/me/top/tracks?time_range=short_term&limit=50',  // Need to modify this
-		headers: {
-		    'Authorization': 'Bearer ' + access_token
-		},
-		success: function(response) {
-		    // handlebars object getting used here from above
-		    // with the data from the api call
-		    shortTermPlaceholder.innerHTML = listTemplate(response);
-		    $('#short-term').hide();
-		}
+	    getTop(access_token, TRACKS, SHORT, 50, 0).done(function(response) {
+		shortTermPlaceholder.innerHTML = listTemplate(response);
+		$('#short-term').hide();
 	    });
-	    
+
 	    // Medium term request
-	    $.ajax({
-		url: 'https://api.spotify.com/v1/me/top/tracks?time_range=medium_term&limit=50',
-		headers: {
-		    'Authorization': 'Bearer ' + access_token
-		},
-		success: function(response) {
-		    // handlebars object getting used here from above
-		    // with the data from the api call
-		    mediumTermPlaceholder.innerHTML = listTemplate(response);
-		    $('#medium-term').hide();
-		}
+	    getTop(access_token, TRACKS, MEDIUM, 50, 0).done(function(response) {
+		mediumTermPlaceholder.innerHTML = listTemplate(response);
+		$('#medium-term').hide();
 	    });
-	    
+
 	    // Long term request
-	    $.ajax({
-		url: 'https://api.spotify.com/v1/me/top/tracks?time_range=long_term&limit=50',
-		headers: {
-		    'Authorization': 'Bearer ' + access_token
-		},
-		success: function(response) {
-		    // handlebars object getting used here from above
-		    // with the data from the api call
-		    longTermPlaceholder.innerHTML = listTemplate(response);
-
-		    let topSongs = response.items;
-		    console.log(topSongs); // temporary
-		    let idList = '';
-		    
-		    for (let i = 0; i < topSongs.length; i++) {
-			idList += topSongs[i].id + ',';
-		    }
-
-		    console.log(idList) // temporary
-		    // request to get song information
-		    getSongFeatures(idList, access_token);
-		    
-		    $('#login').hide();
-		    $('#loggedin').show();
+	    getTop(access_token, TRACKS, LONG, 50, 0).done(function(response) {
+		longTermPlaceholder.innerHTML = listTemplate(response);
+		
+		// combine ids from songs to call api to get song features
+		let topSongs = response.items;
+		let idList = '';
+		for (let i = 0; i < topSongs.length; i++) {
+		    idList += topSongs[i].id + ',';
 		}
+
+		console.log(idList) // temporary
+		// request to get song information
+		getSongFeatures(idList, access_token);
+		
+		$('#login').hide();
+		$('#loggedin').show();
 	    });
+
 	} else {
 	    // render initial screen
 	    $('#login').show();
