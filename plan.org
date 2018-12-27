@@ -1,0 +1,10 @@
+* General
+** grid with various analyses for songs
+
+
+* Tracks
+
+
+* Artists
+** analyzing genres of artists
+** hover over artist name gets artist picture from spotify

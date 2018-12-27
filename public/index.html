@@ -76,7 +76,12 @@
 		    <dl class='dl-horizontal'>
 			<ol>
 			    {{#each items}}
-			    <li>{{this.name}}</li>
+			    <li>{{this.name}}
+				<ul>
+				    <li>Followers: {{followers_string}}</li>
+				    <li>Popularity: {{this.popularity}}</li>
+				</ul>
+			    </li>
 			    {{/each}}
 			</ol>
 		    </dl>

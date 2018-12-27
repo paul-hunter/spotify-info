@@ -16,7 +16,6 @@
 
     const ARTISTS = 'artists';
     const TRACKS = 'tracks';
-    
     const LONG = 'long_term';
     const MEDIUM = 'medium_term';
     const SHORT = 'short_term';
@@ -40,7 +39,6 @@
 	});
     }
 
-
     // gets song features for top songs and
     // songids is a comma separated string 
     function getSongFeatures(songids, access_tok) {
@@ -50,8 +48,6 @@
 		'Authorization': 'Bearer ' + access_tok
 	    },
 	    success: function(response) {
-		console.log(response); //temp
-
 		let features = response.audio_features; // Array of objects with feature data
 		let valenceAvg = 0,
 		    danceAvg = 0,
@@ -65,7 +61,6 @@
 		    energyAvg += features[i].energy;
 		    if (features[i].instrumentalness > .7 ) {
 			instrumentalCount++;
-			console.log(i+1); // temp - to see which songs are marked as instrumental
 		    }
 		}
 
@@ -75,12 +70,17 @@
 
 		let featuresData = {valence: valenceAvg, danceability: danceAvg, energy: energyAvg,
 				    instrumentals: instrumentalCount};
-		console.log(featuresData);
 		featuresPlaceholder.innerHTML = featuresTemplate(featuresData);
 	    }
 	});
     }
 
+    // Handlebars helper that inserts commas for more readable follower numbers
+    Handlebars.registerHelper('followers_string', function() {
+	let number = Number(Handlebars.escapeExpression(this.followers.total));
+	return new Handlebars.SafeString(number.toLocaleString());
+    });
+    
     // Set up handlebars templates
     let songSource = document.getElementById('song-template').innerHTML,
 	songTemplate = Handlebars.compile(songSource),
@@ -104,7 +104,7 @@
     if (error) {
 	alert('There was an error during the authentication');
     } else {
-	if (access_token) {
+      	if (access_token) {
  	    // render oauth info
 	    oauthPlaceholder.innerHTML = oauthTemplate({
 		access_token: access_token,
@@ -152,7 +152,6 @@
 		    idList += topSongs[i].id + ',';
 		}
 
-		console.log(idList) // temporary
 		// request to get song information
 		getSongFeatures(idList, access_token);
 		
