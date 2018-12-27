@@ -80,12 +80,12 @@
 	    }
 	});
     }
-    
-    let listSource = document.getElementById('list-template').innerHTML,
-	listTemplate = Handlebars.compile(listSource),
-	shortTermPlaceholder = document.getElementById('short-term'),
-	mediumTermPlaceholder = document.getElementById('medium-term'),
-	longTermPlaceholder = document.getElementById('long-term');
+
+    // Set up handlebars templates
+    let songSource = document.getElementById('song-template').innerHTML,
+	songTemplate = Handlebars.compile(songSource),
+	artistSource = document.getElementById('artist-template').innerHTML,
+	artistTemplate = Handlebars.compile(artistSource);
 
     let featuresSource = document.getElementById('features-template').innerHTML,
 	featuresTemplate = Handlebars.compile(featuresSource),
@@ -110,22 +110,40 @@
 		access_token: access_token,
 		refresh_token: refresh_token
 	    });
+	    
+	    // Short term artist request
+	    getTop(access_token, ARTISTS, SHORT, 50, 0).done(function(response) {
+		document.getElementById('short-term-artists').innerHTML = artistTemplate(response);
+		$('#short-term-artists').hide();
+	    });
 
-	    // Short term request
+	    // Medium term artist request
+	    getTop(access_token, ARTISTS, MEDIUM, 50, 0).done(function(response) {
+		document.getElementById('medium-term-artists').innerHTML = artistTemplate(response);
+		$('#medium-term-artists').hide();
+	    });
+	    
+	    // Long term artist request
+	    getTop(access_token, ARTISTS, LONG, 50, 0).done(function(response) {
+		document.getElementById('long-term-artists').innerHTML = artistTemplate(response);
+		$('#long-term-artists').hide();
+	    });
+	    
+	    // Short term tracks request
 	    getTop(access_token, TRACKS, SHORT, 50, 0).done(function(response) {
-		shortTermPlaceholder.innerHTML = listTemplate(response);
+		document.getElementById('short-term').innerHTML = songTemplate(response);
 		$('#short-term').hide();
 	    });
 
-	    // Medium term request
+	    // Medium term tracks request
 	    getTop(access_token, TRACKS, MEDIUM, 50, 0).done(function(response) {
-		mediumTermPlaceholder.innerHTML = listTemplate(response);
+		document.getElementById('medium-term').innerHTML = songTemplate(response);
 		$('#medium-term').hide();
 	    });
 
-	    // Long term request
+	    // Long term tracks request (default view)
 	    getTop(access_token, TRACKS, LONG, 50, 0).done(function(response) {
-		longTermPlaceholder.innerHTML = listTemplate(response);
+		document.getElementById('long-term').innerHTML = songTemplate(response);
 		
 		// combine ids from songs to call api to get song features
 		let topSongs = response.items;
@@ -148,24 +166,63 @@
 	    $('#loggedin').hide();
 	}
 
+	// This can't be good code ... figure out better way later along with drop down
 	document.getElementById('short-toggle').addEventListener('click', function () {
+	    $('#short-term-artists').hide();
+	    $('#medium-term-artists').hide();
+	    $('#long-term-artists').hide();
+	    $('#short-term').show();
 	    $('#medium-term').hide();
 	    $('#long-term').hide();
-	    $('#short-term').show();
 	});
 	
 	document.getElementById('medium-toggle').addEventListener('click', function () {
+	    $('#short-term-artists').hide();
+	    $('#medium-term-artists').hide();
+	    $('#long-term-artists').hide();
 	    $('#short-term').hide();
-	    $('#long-term').hide();
 	    $('#medium-term').show();
+	    $('#long-term').hide();
 	});
 
 	document.getElementById('long-toggle').addEventListener('click', function () {
+	    $('#short-term-artists').hide();
+	    $('#medium-term-artists').hide();
+	    $('#long-term-artists').hide();
 	    $('#short-term').hide();
 	    $('#medium-term').hide();
 	    $('#long-term').show();
 	});	
+
+	document.getElementById('short-toggle-artists').addEventListener('click', function () {
+	    $('#short-term-artists').show();
+	    $('#medium-term-artists').hide();
+	    $('#long-term-artists').hide();
+	    $('#short-term').hide();
+	    $('#medium-term').hide();
+	    $('#long-term').hide();
+	});	
+
+	document.getElementById('medium-toggle-artists').addEventListener('click', function () {
+	    $('#short-term-artists').hide();
+	    $('#medium-term-artists').show();
+	    $('#long-term-artists').hide();
+	    $('#short-term').hide();
+	    $('#medium-term').hide();
+	    $('#long-term').hide();
+	});	
+
+	document.getElementById('long-toggle-artists').addEventListener('click', function () {
+	    $('#short-term-artists').hide();
+	    $('#medium-term-artists').hide();
+	    $('#long-term-artists').show();
+	    $('#short-term').hide();
+	    $('#medium-term').hide();
+	    $('#long-term').hide();
+	});	
+
 	
+	// To delete at later date
 	document.getElementById('obtain-new-token').addEventListener('click', function() {
 	    $.ajax({
 		url: '/refresh_token',

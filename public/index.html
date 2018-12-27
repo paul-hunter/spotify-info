@@ -26,20 +26,30 @@
 	    </div>
 	    <div id='loggedin'>
 		<br>
-		<button id='short-toggle'>Short term (4 weeks)</button>
-		<button id='medium-toggle'>Medium term (6 months)</button>
-		<button id='long-toggle'>Long term (multiple years)</button>
+		<div>
+		    <button id='short-toggle'>Short term tracks (4 weeks)</button>
+		    <button id='medium-toggle'>Medium term tracks (6 months)</button>
+		    <button id='long-toggle'>Long term tracks (multiple years)</button>
+		</div>
+		<div>
+		    <button id='short-toggle-artists'>Short term artists (4 weeks)</button>
+		    <button id='medium-toggle-artists'>Medium term artists (6 months)</button>
+		    <button id='long-toggle-artists'>Long term artists (multiple years)</button>
+		</div>
 		<div id='short-term'></div>
 		<div id='medium-term'></div>
 		<div id='long-term'></div>
+		<div id='short-term-artists'></div>
+		<div id='medium-term-artists'></div>
+		<div id='long-term-artists'></div>
 		<div id='features'></div>
 		<div id='oauth'></div>
 		<button class='btn btn-default' id='obtain-new-token'>Obtain new token using the refresh token</button>
 	    </div>
 	</div>
 
-	<script id='list-template' type='text/x-handlebars-template'>
-	    <h1>Top {{total}} Songs</h1>
+	<script id='song-template' type='text/x-handlebars-template'>
+	    <h1>Top {{total}} {{items.0.type}}s</h1>
 	    <div class='media'>
 		<div class='pull-left'>
 		    <img class='media-object' width='150' src='{{images.0.url}}'/>
@@ -55,9 +65,9 @@
 		</div>
 	    </div>
 	</script>
-
-	<script id='artists-template' type='text/x-handlebars-template'>
-	    <h1>Top {{total}} Songs</h1>
+	
+	<script id='artist-template' type='text/x-handlebars-template'>
+	    <h1>Top {{total}} {{items.0.type}}s</h1>
 	    <div class='media'>
 		<div class='pull-left'>
 		    <img class='media-object' width='150' src='{{images.0.url}}'/>
@@ -66,14 +76,14 @@
 		    <dl class='dl-horizontal'>
 			<ol>
 			    {{#each items}}
-			    <li>{{this.name}} - {{this.artists.0.name}}</li>
+			    <li>{{this.name}}</li>
 			    {{/each}}
 			</ol>
 		    </dl>
 		</div>
 	    </div>
-	</script>	
-	
+	</script>
+
 	<script id='features-template' type='text/x-handlebars-template'>
 	    <h2>Audio analysis</h2>
 	    <dl class='dl-horizontal'>
