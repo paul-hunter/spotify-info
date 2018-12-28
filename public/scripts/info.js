@@ -30,12 +30,6 @@
 	    headers: {
 		'Authorization': 'Bearer ' + access_token
 	    },
-	    /*
-	    success: function(response) {
-		$('#login').hide();
-		$('#loggedin').show();
-	    }
-	    */
 	});
     }
 
@@ -90,11 +84,7 @@
     let featuresSource = document.getElementById('features-template').innerHTML,
 	featuresTemplate = Handlebars.compile(featuresSource),
 	featuresPlaceholder = document.getElementById('features');
-    
-    let oauthSource = document.getElementById('oauth-template').innerHTML,
-	oauthTemplate = Handlebars.compile(oauthSource),
-	oauthPlaceholder = document.getElementById('oauth');
-    
+        
     let params = getHashParams();
 
     let access_token = params.access_token,
@@ -105,12 +95,6 @@
 	alert('There was an error during the authentication');
     } else {
       	if (access_token) {
- 	    // render oauth info
-	    oauthPlaceholder.innerHTML = oauthTemplate({
-		access_token: access_token,
-		refresh_token: refresh_token
-	    });
-	    
 	    // Short term artist request
 	    getTop(access_token, ARTISTS, SHORT, 50, 0).done(function(response) {
 		document.getElementById('short-term-artists').innerHTML = artistTemplate(response);
@@ -218,23 +202,6 @@
 	    $('#short-term').hide();
 	    $('#medium-term').hide();
 	    $('#long-term').hide();
-	});	
-
-	
-	// To delete at later date
-	document.getElementById('obtain-new-token').addEventListener('click', function() {
-	    $.ajax({
-		url: '/refresh_token',
-		data: {
-		    'refresh_token': refresh_token
-		}
-	    }).done(function(data) {
-		access_token = data.access_token;
-		oauthPlaceholder.innerHTML = oauthTemplate({
-		    access_token: access_token,
-		    refresh_token: refresh_token
-		});
-	    });
-	}, false);
+	});
     }
 })();
