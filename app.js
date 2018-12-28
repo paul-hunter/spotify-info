@@ -12,10 +12,9 @@ var request = require('request'); // "Request" library
 var cors = require('cors');
 var querystring = require('querystring');
 var cookieParser = require('cookie-parser');
-var secret = require('./secret'); // Put client_secret key in here
 
 var client_id = '5453a49811cd4b9686761335b0d9adfb';
-var client_secret = secret.client_secret;
+var client_secret = process.env.SPOTIFY_CLIENT_SECRET;
 var redirect_uri = 'http://localhost:8888/callback';
 
 /**
@@ -147,5 +146,5 @@ app.get('/refresh_token', function(req, res) {
   });
 });
 
-console.log('Listening on 8888');
-app.listen(8888);
+console.log('Listening on ' + (process.env.PORT || 8888));
+app.listen(process.env.PORT || 8888)
