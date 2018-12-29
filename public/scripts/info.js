@@ -72,7 +72,12 @@
     // Handlebars helper that inserts commas for more readable follower numbers
     Handlebars.registerHelper('followers_string', function() {
 	let number = Number(Handlebars.escapeExpression(this.followers.total));
-	return new Handlebars.SafeString(number.toLocaleString());
+	return number.toLocaleString();
+    });
+
+    // Start song # at 1 instead of 0
+    Handlebars.registerHelper('item_num', function(index) {
+	return (index + 1);
     });
     
     // Set up handlebars templates

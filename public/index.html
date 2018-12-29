@@ -36,55 +36,67 @@
 		    <button id='medium-toggle-artists'>Medium term artists (6 months)</button>
 		    <button id='long-toggle-artists'>Long term artists (multiple years)</button>
 		</div>
-		<div id='short-term'></div>
-		<div id='medium-term'></div>
-		<div id='long-term'></div>
-		<div id='short-term-artists'></div>
-		<div id='medium-term-artists'></div>
-		<div id='long-term-artists'></div>
+		
+		<div id='tracks'>
+		    <div id='short-term'></div>
+		    <div id='medium-term'></div>
+		    <div id='long-term'></div>
+		</div>
+		<div id='artists'>
+		    <div id='short-term-artists'></div>
+		    <div id='medium-term-artists'></div>
+		    <div id='long-term-artists'></div>
+		</div>
 		<div id='features'></div>
 	    </div>
 	</div>
 
 	<script id='song-template' type='text/x-handlebars-template'>
 	    <h1>Top {{total}} {{items.0.type}}s</h1>
-	    <div class='media'>
-		<div class='pull-left'>
-		    <img class='media-object' width='150' src='{{images.0.url}}'/>
-		</div>
-		<div class='media-body'>
-		    <dl class='dl-horizontal'>
-			<ol>
-			    {{#each items}}
-			    <li>{{this.name}} - {{this.artists.0.name}}</li>
-			    {{/each}}
-			</ol>
-		    </dl>
-		</div>
-	    </div>
+	    <table class='table table-responsive table-hover'>
+		<thead>
+		    <tr>
+ 			<th>#</th>
+			<th>Song</th>
+			<th>Artist</th>
+			<th>Album</th>
+		    </tr>
+		</thead>
+		<tbody>
+		    {{#each items}}
+		    <tr>
+			<td>{{item_num @index}}</td>
+			<td>{{this.name}}</td>
+			<td>{{this.artists.0.name}}</td>
+			<td>{{this.album.name}}</td>
+		    </tr>
+		    {{/each}}
+		</tbody>	    
+	    </table>
 	</script>
 	
 	<script id='artist-template' type='text/x-handlebars-template'>
 	    <h1>Top {{total}} {{items.0.type}}s</h1>
-	    <div class='media'>
-		<div class='pull-left'>
-		    <img class='media-object' width='150' src='{{images.0.url}}'/>
-		</div>
-		<div class='media-body'>
-		    <dl class='dl-horizontal'>
-			<ol>
-			    {{#each items}}
-			    <li>{{this.name}}
-				<ul>
-				    <li>Followers: {{followers_string}}</li>
-				    <li>Popularity: {{this.popularity}}</li>
-				</ul>
-			    </li>
-			    {{/each}}
-			</ol>
-		    </dl>
-		</div>
-	    </div>
+	    <table class='table table-responsive table-hover'>
+		<thead>
+		    <tr>
+ 			<th>#</th>
+			<th>Artist</th>
+			<th>Popularity</th>
+			<th>Followers</th>
+		    </tr>
+		</thead>
+		<tbody>
+		    {{#each items}}
+		    <tr>
+			<td>{{item_num @index}}</td>
+			<td>{{this.name}}</td>
+			<td>{{followers_string}}</td>
+			<td>{{this.popularity}}</td>
+		    </tr>
+		    {{/each}}
+		</tbody>	    
+	    </table>
 	</script>
 
 	<script id='features-template' type='text/x-handlebars-template'>
@@ -99,6 +111,7 @@
 
 	<script src='https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.0.12/handlebars.min.js'></script>
 	<script src='https://code.jquery.com/jquery-3.3.1.min.js'</script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 	<script src='https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js'></script>
 	<script src='scripts/info.js'></script>
     </body>
