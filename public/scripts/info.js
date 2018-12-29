@@ -68,16 +68,27 @@
 	    }
 	});
     }
-
+    
     // Handlebars helper that inserts commas for more readable follower numbers
     Handlebars.registerHelper('followers_string', function() {
-	let number = Number(Handlebars.escapeExpression(this.followers.total));
+	let number = this.followers.total;
 	return number.toLocaleString();
     });
 
     // Start song # at 1 instead of 0
     Handlebars.registerHelper('item_num', function(index) {
 	return (index + 1);
+    });
+
+    Handlebars.registerHelper('album_art', function() {
+	// Array of album art images objects {height;width;url}
+	// Typically 3 objects of different size images
+	let artArray = this.album.images;
+	// Album art sorted by width descending order
+	let small = artArray[artArray.length-1];
+	
+	return new Handlebars.SafeString(
+	    "<img src='" + small.url + "' width='" + small.width + "'>");
     });
     
     // Set up handlebars templates

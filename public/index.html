@@ -59,6 +59,7 @@
 		<thead>
 		    <tr>
  			<th>#</th>
+			<th></th>
 			<th>Song</th>
 			<th>Artist</th>
 			<th>Album</th>
@@ -70,6 +71,7 @@
 		    {{#each items}}
 		    <tr>
 			<td>{{item_num @index}}</td>
+			<td>{{album_art}}</td>
 			<td>{{this.name}}</td>
 			<td>{{this.artists.0.name}}</td>
 			<td>{{this.album.name}}</td>
