@@ -18,7 +18,16 @@
     const TRACKS = 'tracks';
     const LONG = 'long_term';
     const MEDIUM = 'medium_term';
-    const SHORT = 'short_term';
+	const SHORT = 'short_term';
+	
+	let fullTrackList = [];
+
+	function mergeObjects(a1, a2) {
+		return a1.map(itm => 
+			({ ...a2.find((item) =>
+			(item.id === itm.id) && item), ...itm })
+		);
+	}
 
     // type: ARTISTS, TRACKS
     // term: LONG, MEDIUM, SHORT
@@ -42,29 +51,34 @@
 		'Authorization': 'Bearer ' + access_tok
 	    },
 	    success: function(response) {
-		let features = response.audio_features; // Array of objects with feature data
-		let valenceAvg = 0,
-		    danceAvg = 0,
-		    energyAvg = 0;
+			let features = response.audio_features; // Array of objects with feature data
+			let valenceAvg = 0,
+				danceAvg = 0,
+				energyAvg = 0;
 
-		let instrumentalCount = 0;
+			let instrumentalCount = 0;
 
-		for (let i = 0; i < features.length; i++) {
-		    valenceAvg += features[i].valence;
-		    danceAvg += features[i].danceability;
-		    energyAvg += features[i].energy;
-		    if (features[i].instrumentalness > .7 ) {
-			instrumentalCount++;
-		    }
-		}
+			for (let i = 0; i < features.length; i++) {
+				valenceAvg += features[i].valence;
+				danceAvg += features[i].danceability;
+				energyAvg += features[i].energy;
+				if (features[i].instrumentalness > .7 ) {
+				instrumentalCount++;
+				}
+			}
 
-		valenceAvg /= features.length;
-		danceAvg /= features.length;
-		energyAvg /= features.length;
+			valenceAvg /= features.length;
+			danceAvg /= features.length;
+			energyAvg /= features.length;
 
-		let featuresData = {valence: valenceAvg, danceability: danceAvg, energy: energyAvg,
-				    instrumentals: instrumentalCount};
-		featuresPlaceholder.innerHTML = featuresTemplate(featuresData);
+			let featuresData = {valence: valenceAvg, danceability: danceAvg, energy: energyAvg,
+						instrumentals: instrumentalCount};
+			featuresPlaceholder.innerHTML = featuresTemplate(featuresData);
+
+			fullTrackList.items = mergeObjects(fullTrackList.items, response.audio_features);
+			console.log(fullTrackList);
+
+			document.getElementById('long-term-tracks').innerHTML = songTemplate(fullTrackList);
 	    }
 	});
     }
@@ -81,15 +95,24 @@
     });
 
     Handlebars.registerHelper('album_art', function() {
-	// Array of album art images objects {height;width;url}
-	// Typically 3 objects of different size images
-	let artArray = this.album.images;
-	// Album art sorted by width descending order
-	let small = artArray[artArray.length-1];
+		// Array of album art images objects {height;width;url}
+		// Typically 3 objects of different size images
+		let artArray = this.album.images;
+		// Album art sorted by width descending order
+		let small = artArray[artArray.length-1];
+		
+		return new Handlebars.SafeString(
+			"<img class=\"album-thumb\" src=\"" + small.url + "\" width=\"" + small.width + "\">"
+		);
+	});
 	
-	return new Handlebars.SafeString(
-	    "<img src='" + small.url + "' width='" + small.width + "'>");
-    });
+	Handlebars.registerHelper('scale', function(value) {
+		value = Math.floor(value * 100);
+	  
+		return new Handlebars.SafeString(
+		  "<div style=\"left: " + value + "%\" class=\"scale-tick\"></div>"
+		);
+	  });
     
     // Set up handlebars templates
     let songSource = document.getElementById('song-template').innerHTML,
@@ -125,38 +148,41 @@
 	    
 	    // Long term artist request
 	    getTop(access_token, ARTISTS, LONG, 50, 0).done(function(response) {
-		document.getElementById('long-term-artists').innerHTML = artistTemplate(response);
-		$('#long-term-artists').hide();
+			document.getElementById('long-term-artists').innerHTML = artistTemplate(response);
+			$('#long-term-artists').hide();
 	    });
 	    
 	    // Short term tracks request
 	    getTop(access_token, TRACKS, SHORT, 50, 0).done(function(response) {
-		document.getElementById('short-term').innerHTML = songTemplate(response);
+		document.getElementById('short-term-tracks').innerHTML = songTemplate(response);
 		$('#short-term').hide();
 	    });
 
 	    // Medium term tracks request
 	    getTop(access_token, TRACKS, MEDIUM, 50, 0).done(function(response) {
-		document.getElementById('medium-term').innerHTML = songTemplate(response);
+		document.getElementById('medium-term-tracks').innerHTML = songTemplate(response);
 		$('#medium-term').hide();
 	    });
 
 	    // Long term tracks request (default view)
 	    getTop(access_token, TRACKS, LONG, 50, 0).done(function(response) {
-		document.getElementById('long-term').innerHTML = songTemplate(response);
-		
-		// combine ids from songs to call api to get song features
-		let topSongs = response.items;
-		let idList = '';
-		for (let i = 0; i < topSongs.length; i++) {
-		    idList += topSongs[i].id + ',';
+			// combine ids from songs to call api to get song features
+			//document.getElementById('long-term').innerHTML = songTemplate(response);
+			//console.log(response);
+			let topSongs = response.items;
+			let idList = '';
+			for (let i = 0; i < topSongs.length; i++) {
+				idList += topSongs[i].id + ',';
+			fullTrackList = response;
 		}
+
+
 
 		// request to get song information
 		getSongFeatures(idList, access_token);
 		
-		$('#login').hide();
-		$('#loggedin').show();
+			$('#login').hide();
+			$('#loggedin').show();
 	    });
 
 	} else {
@@ -165,23 +191,40 @@
 	    $('#loggedin').hide();
 	}
 
+	
+	document.querySelectorAll(".toggle-thinger").forEach(element => {
+		element.addEventListener('click', function() {
+			$('.list-chunk').hide();
+			let track_album, duration;
+
+			document.querySelectorAll(".track-album").forEach(element => {
+				if (element.querySelector('input').checked) track_album = element.querySelector('input').dataset.getter;
+			});
+
+			document.querySelectorAll(".duration").forEach(element => {
+				if (element.querySelector('input').checked) duration = element.querySelector('input').dataset.getter;
+			});
+
+			let id = '#' + duration + track_album;
+			console.log(id);
+			$(id).show();
+		}, false);
+	});
+
+	function changeList() {
+		
+	}
+
+	/*
 	// This can't be good code ... figure out better way later along with drop down
 	document.getElementById('short-toggle').addEventListener('click', function () {
-	    $('#short-term-artists').hide();
-	    $('#medium-term-artists').hide();
-	    $('#long-term-artists').hide();
+	    $('.list-chunk').hide();
 	    $('#short-term').show();
-	    $('#medium-term').hide();
-	    $('#long-term').hide();
 	});
 	
 	document.getElementById('medium-toggle').addEventListener('click', function () {
-	    $('#short-term-artists').hide();
-	    $('#medium-term-artists').hide();
-	    $('#long-term-artists').hide();
-	    $('#short-term').hide();
+		$('.list-chunk').hide();
 	    $('#medium-term').show();
-	    $('#long-term').hide();
 	});
 
 	document.getElementById('long-toggle').addEventListener('click', function () {
@@ -219,5 +262,6 @@
 	    $('#medium-term').hide();
 	    $('#long-term').hide();
 	});
+	*/
     }
 })();
