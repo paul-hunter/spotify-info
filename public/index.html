@@ -57,34 +57,34 @@
 						</div>
 						<div class="col-md-9 col-md-offset-1">
 								<div class="history-chooser">
-										<div class="btn-group btn-group-toggle">
-											<label class="btn active toggle-thinger track-album">
+										<div class="bttn-group">
+											<label class="bttn toggle-thinger track-album">
 												<input id="track" data-getter="-tracks" name="track-artist" type="radio" checked />
 												Tracks
 											</label>
 
-											<label class="btn toggle-thinger track-album" >
+											<label class="bttn toggle-thinger track-album" >
 												<input id="artist" data-getter="-artists" name="track-artist" type="radio" />
 												Artists
 											</label>
 										</div>
 
-											<!--<div class="vertical-tick"></div>-->
+										<div class="vertical-tick"></div>
 
-										<div class="btn-group btn-group-toggle">
+										<div class="bttn-group">
 
-											<label class="btn active toggle-thinger duration" >
-												<input id="short" data-getter="short-term" name="duration" type="radio" checked />
+											<label class="bttn toggle-thinger duration" >
+												<input id="short" data-getter="short-term" name="duration" type="radio"  />
 												Past 4 Weeks
 											</label>
 											
-											<label class="btn toggle-thinger duration">
+											<label class="bttn toggle-thinger duration">
 												<input id="medium" data-getter="medium-term" name="duration" type="radio"  />
 												Past 6 Months
 											</label>
 											
-											<label class="btn toggle-thinger duration">
-												<input id="long" data-getter="long-term" name="duration" type="radio" />
+											<label class="bttn toggle-thinger duration">
+												<input id="long" data-getter="long-term" name="duration" type="radio" checked />
 												All Time
 											</label>
 										</div>
@@ -139,7 +139,7 @@
 	
 	<script id='artist-template' type='text/x-handlebars-template'>
 	    <h1>Top {{total}} {{items.0.type}}s</h1>
-	    <table class='table table-responsive table-hover'>
+	    <table class='table table-responsive'>
 		<thead>
 		    <tr>
  			<th>#</th>
@@ -164,7 +164,7 @@
 	<script id='features-template' type='text/x-handlebars-template'>
 	    <div class='featuers-list'>
 			<div class="row features-list-row">
-				<div class="col-sm-8 f-label">
+				<div class="col-sm-6 f-label">
 					<p class="lg-label">Mood</p>
 					<hr>
 				</div>
@@ -181,7 +181,7 @@
 				</div>
 			</div>
 			<div class="row features-list-row">
-				<div class="col-sm-8 f-label">
+				<div class="col-sm-6 f-label">
 					<p class="lg-label">Danceability</p>
 					<hr>
 				</div>
@@ -196,7 +196,7 @@
 				</div>
 			</div>
 			<div class="row features-list-row">
-				<div class="col-sm-8 f-label">
+				<div class="col-sm-6 f-label">
 					<p class="lg-label">Energy</p>
 					<hr>
 				</div>

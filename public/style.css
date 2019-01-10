@@ -21,6 +21,14 @@ hr {
     margin: 0;
 }
 
+.vertical-tick {
+    margin: 0 7px;
+    display: inline-block;
+    height: 25px;
+    width: 1px;
+    background-color: #414042;
+    vertical-align: middle;
+}
 
 
 /*=========================================
@@ -88,6 +96,65 @@ th {
     border: none;
 }
 
+label {
+    color: #BEBEBF;
+}
+
+label:hover {
+    color: #D1D3D4;
+}
+
+
+/*=========================================
+BUTTONS 'N OTHER COMPONENTS
+==========================================*/
+
+.bttn {
+    display: flex;
+    border-radius: 15px;
+    height: 30px;
+    font-size: 10px;
+    text-transform: uppercase;
+    padding: 0 17px;
+    letter-spacing: 0.2em;
+    color: rgba(255,255,255,0.8);
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 2px 6px rgba(0,0,0,.1);
+    transition: all .25s ease-in-out;
+    cursor: pointer;
+    background: linear-gradient(90deg, rgba(218, 28, 92, 1) 0%, rgba(238, 42, 123, 1) 100%);
+}
+
+.bttn-group {
+    display: inline-flex;
+    margin-bottom: 15px;
+}
+
+.toggle-thinger {
+    color: #808285;
+    border-radius: 20px !important;
+    background: transparent;
+    box-shadow: none;
+}
+
+.toggle-thinger:hover {
+    color: #D1D3D4;
+}
+
+.toggle-thinger.checked {
+    box-shadow: inset 0 2px 6px rgba(0,0,0,.1);
+    color: rgba(255,255,255,0.8);
+    border-radius: 20px !important;
+    background: rgba(218, 28, 92, 1);
+}
+
+.toggle-thinger input {
+    display: none;
+}
+
+
+
 /*=========================================
 LOG IN PAGE
 ==========================================*/
@@ -151,8 +218,27 @@ LOGGED IN
 
 }
 
+.track-album {
+
+}
+
+.duration {
+
+}
+
 .history-container {
+    padding-top: 70px;
+    padding-bottom: 140px;
     background-color: #282728;
+}
+
+.list-chunk {
+    min-height: 300px;
+    display: none;
+}
+
+.shown {
+    display: block;
 }
 
 .album-thumb {
