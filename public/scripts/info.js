@@ -168,8 +168,8 @@
         
     let params = getHashParams();
 
-    let access_token = params.access_token,
-	refresh_token = params.refresh_token,
+    let access_token = document.cookie.replace(/(?:(?:^|.*;\s*)access_token\s*\=\s*([^;]*).*$)|^.*$/, "$1"),
+	refresh_token = document.cookie.replace(/(?:(?:^|.*;\s*)refresh_token\s*\=\s*([^;]*).*$)|^.*$/, "$1"),
 	error = params.error;
 
 
