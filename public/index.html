@@ -3,6 +3,7 @@
     <head>
 	<title>Spotify User Info</title>
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+	<link rel="stylesheet" href="/style.css">
 	<style type='text/css'>
 	 #login, #loggedin {
              display: none;
@@ -14,78 +15,131 @@
              width: 500px;
 	 }
 	</style>
+	<link href="https://fonts.googleapis.com/css?family=Lato:300|Playfair+Display:900" rel="stylesheet">
 	<script src='https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.0.12/handlebars.min.js'></script>
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 	<script src='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js'></script>
     </head>
 
     <body>
-	<div class='container'>
+
+		<nav class="navbar navbar-expand-lg navbar-light">
+			<a class="navbar-brand" href="#">Spotify Thingy</a>
+		</nav>
+
 	    <div id='login'>
-		<h1>Login For User Info</h1>
-		<a href='/login' class='btn btn-primary'>Login</a>
-	    </div>
+			<h1>Login For User Info</h1>
+			<a href='/login' class='btn btn-primary'>Login</a>
+		</div>
+
 	    <div id='loggedin'>
-		<br>
-		<div class="dropdown">
-		    <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Tracks/Artists
-			<span class="caret"></span></button>
-		    <ul class="dropdown-menu">
-			<li><a href="#" id='short-toggle'>Short term tracks (4 weeks)</a></li>
-			<li><a href="#" id='medium-toggle'>Medium term tracks (6 months)</a></li>
-			<li><a href="#" id='long-toggle'>Long term tracks (multiple years)</a></li>
-			<li><a href="#" id='short-toggle-artists'>Short term artists (4 weeks)</a></li>
-			<li><a href="#" id='medium-toggle-artists'>Medium term artists (6 months)</a></li>
-			<li><a href="#" id='long-toggle-artists'>Long term artists (multiple years)</a></li>
-		    </ul>
-		</div>
-		<div id='tracks'>
-		    <div id='short-term'></div>
-		    <div id='medium-term'></div>
-		    <div id='long-term'></div>
-		</div>
-		<div id='artists'>
-		    <div id='short-term-artists'></div>
-		    <div id='medium-term-artists'></div>
-		    <div id='long-term-artists'></div>
-		</div>
-		<div id='features'></div>
+			<div class="features-container">
+				<div class="container">
+					<div class="row chunk"> 
+						<div class="col-md-2 title-col">
+							<h2>Your analysis</h2>
+							<hr class="tick">
+						</div>
+						<div class="col-md-9 col-md-offset-1">
+							<div id='features'></div>
+						</div>
+					</div>		
+				</div>
+			</div>
+			
+			
+			<div class="history-container">
+				<div class="container">
+					<div class="row chunk"> 
+						<div class="col-md-2 title-col">
+							<h2>Your listening history</h2>
+							<hr class="tick">
+						</div>
+						<div class="col-md-9 col-md-offset-1">
+								<div class="history-chooser">
+										<div class="bttn-group">
+											<label class="bttn toggle-thinger track-album">
+												<input id="track" data-getter="-tracks" name="track-artist" type="radio" checked />
+												Tracks
+											</label>
+
+											<label class="bttn toggle-thinger track-album" >
+												<input id="artist" data-getter="-artists" name="track-artist" type="radio" />
+												Artists
+											</label>
+										</div>
+
+										<div class="vertical-tick"></div>
+
+										<div class="bttn-group">
+
+											<label class="bttn toggle-thinger duration" >
+												<input id="short" data-getter="short-term" name="duration" type="radio"  />
+												Past 4 Weeks
+											</label>
+											
+											<label class="bttn toggle-thinger duration">
+												<input id="medium" data-getter="medium-term" name="duration" type="radio"  />
+												Past 6 Months
+											</label>
+											
+											<label class="bttn toggle-thinger duration">
+												<input id="long" data-getter="long-term" name="duration" type="radio" checked />
+												All Time
+											</label>
+										</div>
+								</div>
+								<div id='tracks'>
+									<div id='short-term-tracks' class="list-chunk"></div>
+									<div id='medium-term-tracks' class="list-chunk"></div>
+									<div id='long-term-tracks' class="list-chunk"></div>
+								</div>
+							<div id='artists'>
+								<div id='short-term-artists' class="list-chunk"></div>
+								<div id='medium-term-artists' class="list-chunk"></div>
+								<div id='long-term-artists' class="list-chunk"></div>
+							</div>	
+						</div>
+					</div>	
+				</div>
+			</div>
+			
 	    </div>
-	</div>
 
 	<script id='song-template' type='text/x-handlebars-template'>
-	    <h1>Top {{total}} {{items.0.type}}s</h1>
-	    <table class='table table-responsive table-hover'>
-		<thead>
-		    <tr>
- 			<th>#</th>
-			<th></th>
-			<th>Song</th>
-			<th>Artist</th>
-			<th>Album</th>
-			<th>Popularity</th>
-			<th>Release Date</th>
-		    </tr>
-		</thead>
-		<tbody>
-		    {{#each items}}
-		    <tr>
-			<td>{{item_num @index}}</td>
-			<td>{{album_art}}</td>
-			<td>{{this.name}}</td>
-			<td>{{this.artists.0.name}}</td>
-			<td>{{this.album.name}}</td>
-			<td>{{this.popularity}}</td>
-			<td>{{this.album.release_date}}</td>
-		    </tr>
-		    {{/each}}
-		</tbody>	    
+	    <!--<h1>Top {{total}} {{items.0.type}}s</h1>-->
+	    <table class='table table-responsive'>
+			<thead>
+				<tr>
+					<th></th>
+					<th></th>
+					<th>Rank</th>
+					<th>Energy</th>
+					<th>Danceability</th>
+					<th>Valance/Mood</th>
+				</tr>
+			</thead>
+			<tbody>
+				{{#each items}}
+					<tr>
+						<td>{{album_art}}</td>
+						<td>
+							<p class="sm-label">{{this.name}}</p>
+							<p class="sm-sub-label">{{this.artists.0.name}}</p>
+						</td>
+						<td>{{item_num @index}}</td>
+						<td>{{this.energy}}</td>
+						<td>{{this.danceability}}</td>
+						<td>{{this.valence}}</td>
+					</tr>
+				{{/each}}
+			</tbody>	    
 	    </table>
 	</script>
 	
 	<script id='artist-template' type='text/x-handlebars-template'>
 	    <h1>Top {{total}} {{items.0.type}}s</h1>
-	    <table class='table table-responsive table-hover'>
+	    <table class='table table-responsive'>
 		<thead>
 		    <tr>
  			<th>#</th>
@@ -108,13 +162,57 @@
 	</script>
 
 	<script id='features-template' type='text/x-handlebars-template'>
-	    <h2>Audio analysis</h2>
-	    <dl class='dl-horizontal'>
-		<dt>Valence</dt><dd>{{valence}}</dd>
-		<dt>Danceability</dt><dd>{{danceability}}</dd>
-		<dt>Energy</dt><dd>{{energy}}</dd>
-		<dt>Instrumental Songs</dt><dd>{{instrumentals}}</dd>
-	    </dl>
+	    <div class='featuers-list'>
+			<div class="row features-list-row">
+				<div class="col-sm-6 f-label">
+					<p class="lg-label">Mood</p>
+					<hr>
+				</div>
+				<div class="col-sm-4">
+					<div class="scale-container">
+						<div class="scale">
+							<span>Happy</span>	
+							<span>Sad</span>	
+						</div>
+						{{scale valence}}
+					</div>
+
+					
+				</div>
+			</div>
+			<div class="row features-list-row">
+				<div class="col-sm-6 f-label">
+					<p class="lg-label">Danceability</p>
+					<hr>
+				</div>
+				<div class="col-sm-4">
+					<div class="scale-container">
+						<div class="scale">
+							<span>More</span>	
+							<span>Less</span>	
+						</div>
+						{{scale danceability}}
+					</div>
+				</div>
+			</div>
+			<div class="row features-list-row">
+				<div class="col-sm-6 f-label">
+					<p class="lg-label">Energy</p>
+					<hr>
+				</div>
+				<div class="col-sm-4">
+					<div class="scale-container">
+						<div class="scale">
+							<span>High</span>	
+							<span>Low</span>	
+						</div>
+						{{scale energy}}
+					</div>
+
+				</div>
+			</div>
+			<!--<dt>Instrumental Songs</dt><dd>{{instrumentals}}</dd>-->
+		</div>
 	</script>
 	<script src='scripts/info.js'></script>
     </body>

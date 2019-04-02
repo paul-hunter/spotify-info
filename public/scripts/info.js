@@ -18,7 +18,16 @@
     const TRACKS = 'tracks';
     const LONG = 'long_term';
     const MEDIUM = 'medium_term';
-    const SHORT = 'short_term';
+	const SHORT = 'short_term';
+	
+	let fullTrackList = [];
+
+	function mergeObjects(a1, a2) {
+		return a1.map(itm => 
+			({ ...a2.find((item) =>
+			(item.id === itm.id) && item), ...itm })
+		);
+	}
 
     // type: ARTISTS, TRACKS
     // term: LONG, MEDIUM, SHORT
@@ -42,32 +51,77 @@
 		'Authorization': 'Bearer ' + access_tok
 	    },
 	    success: function(response) {
-		let features = response.audio_features; // Array of objects with feature data
-		let valenceAvg = 0,
-		    danceAvg = 0,
-		    energyAvg = 0;
+			let features = response.audio_features; // Array of objects with feature data
+			let valenceAvg = 0,
+				danceAvg = 0,
+				energyAvg = 0;
 
-		let instrumentalCount = 0;
+			let instrumentalCount = 0;
 
-		for (let i = 0; i < features.length; i++) {
-		    valenceAvg += features[i].valence;
-		    danceAvg += features[i].danceability;
-		    energyAvg += features[i].energy;
-		    if (features[i].instrumentalness > .7 ) {
-			instrumentalCount++;
-		    }
-		}
+			for (let i = 0; i < features.length; i++) {
+				valenceAvg += features[i].valence;
+				danceAvg += features[i].danceability;
+				energyAvg += features[i].energy;
+				if (features[i].instrumentalness > .7 ) {
+				instrumentalCount++;
+				}
+			}
 
-		valenceAvg /= features.length;
-		danceAvg /= features.length;
-		energyAvg /= features.length;
+			valenceAvg /= features.length;
+			danceAvg /= features.length;
+			energyAvg /= features.length;
 
-		let featuresData = {valence: valenceAvg, danceability: danceAvg, energy: energyAvg,
-				    instrumentals: instrumentalCount};
-		featuresPlaceholder.innerHTML = featuresTemplate(featuresData);
+			let featuresData = {valence: valenceAvg, danceability: danceAvg, energy: energyAvg,
+						instrumentals: instrumentalCount};
+			featuresPlaceholder.innerHTML = featuresTemplate(featuresData);
+
+			fullTrackList.items = mergeObjects(fullTrackList.items, response.audio_features);
+			console.log(fullTrackList);
+
+			//document.getElementById('long-term-tracks').innerHTML = songTemplate(fullTrackList);
 	    }
 	});
-    }
+	}
+	
+	function calcAudioFeatures(song_data) {
+			let features = song_data.items; // Array of objects with feature data
+			let valenceAvg = 0,
+				danceAvg = 0,
+				energyAvg = 0;
+
+			let instrumentalCount = 0;
+
+			for (let i = 0; i < features.length; i++) {
+				valenceAvg += features[i].valence;
+				danceAvg += features[i].danceability;
+				energyAvg += features[i].energy;
+				if (features[i].instrumentalness > .7 ) {
+				instrumentalCount++;
+				}
+			}
+
+			valenceAvg /= features.length;
+			danceAvg /= features.length;
+			energyAvg /= features.length;
+
+			let featuresData = {valence: valenceAvg, danceability: danceAvg, energy: energyAvg,
+						instrumentals: instrumentalCount};
+			featuresPlaceholder.innerHTML = featuresTemplate(featuresData);
+	}
+
+
+	function getSongFeatures(songids, access_tok) {
+		$.ajax({
+			url: 'https://api.spotify.com/v1/audio-features?ids=' + songids,
+			headers: {
+			'Authorization': 'Bearer ' + access_tok
+			},
+			success: function(response) {
+				
+			}
+		});
+		}
+		
     
     // Handlebars helper that inserts commas for more readable follower numbers
     Handlebars.registerHelper('followers_string', function() {
@@ -81,16 +135,27 @@
     });
 
     Handlebars.registerHelper('album_art', function() {
-	// Array of album art images objects {height;width;url}
-	// Typically 3 objects of different size images
-	let artArray = this.album.images;
-	// Album art sorted by width descending order
-	let small = artArray[artArray.length-1];
+		// Array of album art images objects {height;width;url}
+		// Typically 3 objects of different size images
+		let artArray = this.album.images;
+		// Album art sorted by width descending order
+		let small = artArray[artArray.length-1];
+		
+		return new Handlebars.SafeString(
+			"<img class=\"album-thumb\" src=\"" + small.url + "\" width=\"" + small.width + "\">"
+		);
+	});
 	
-	return new Handlebars.SafeString(
-	    "<img src='" + small.url + "' width='" + small.width + "'>");
-    });
-    
+	Handlebars.registerHelper('scale', function(value) {
+		value = Math.floor(value * 100);
+	  
+		return new Handlebars.SafeString(
+		  "<div style=\"left: " + value + "%\" class=\"scale-tick\"></div>"
+		);
+	  });
+	
+	  
+
     // Set up handlebars templates
     let songSource = document.getElementById('song-template').innerHTML,
 	songTemplate = Handlebars.compile(songSource),
@@ -103,61 +168,176 @@
         
     let params = getHashParams();
 
-    let access_token = params.access_token,
-	refresh_token = params.refresh_token,
+    let access_token = document.cookie.replace(/(?:(?:^|.*;\s*)access_token\s*\=\s*([^;]*).*$)|^.*$/, "$1"),
+	refresh_token = document.cookie.replace(/(?:(?:^|.*;\s*)refresh_token\s*\=\s*([^;]*).*$)|^.*$/, "$1"),
 	error = params.error;
 
+
+
+	class spotifyGetter {
+
+		constructor(id, term, limit, offset) {
+			if (this.constructor === spotifyGetter) {
+				throw new TypeError('Abstract class "spotifyGetter" cannot be instantiated directly.'); 
+			}
+			this.type = "";
+			this.id = id;
+			this.term = term;
+			this.limit = limit;
+			this.offset = offset;
+		}
+
+		doWithReturned(response) {
+			return response;
+		}
+
+		getTop() {
+
+			let doWithReturned = (response) => {
+				this.doWithReturned(response);
+			}
+			return $.ajax({
+				url: 'https://api.spotify.com/v1/me/top/' + this.type + '?time_range=' + this.term + '&limit=' + this.limit + '&offset=' + this.offset,
+				headers: {
+				'Authorization': 'Bearer ' + access_token
+				},
+			}).done(function(response) {
+				doWithReturned(response);
+			});
+		}
+
+	}
+
+	class getArtists extends spotifyGetter {
+		constructor(id, term, limit, offset) {
+			super(id, term, limit, offset);
+			this.type = ARTISTS;
+		}
+
+		doWithReturned(response) {
+			document.getElementById(this.id).innerHTML = artistTemplate(response);
+		}
+	}
+
+	class getTracks extends spotifyGetter {
+		constructor(id, term, limit, offset, callback = function() {}){
+			super(id, term, limit, offset);
+			this.type = TRACKS;
+			this.callback = callback;
+		}
+
+		doWithReturned(response) {
+			let full_track_list = response;
+			
+			//let id = this.id
+			let topSongs = response.items;
+			let idList = '';
+			for (let i = 0; i < topSongs.length; i++) {
+				idList += topSongs[i].id + ',';
+			}
+
+			let getSongFeatures = (songids) => {
+				$.ajax({
+					url: 'https://api.spotify.com/v1/audio-features?ids=' + songids,
+					headers: {
+					'Authorization': 'Bearer ' + access_token
+					},
+					success: (response) => {
+						
+						full_track_list.items = mergeObjects(full_track_list.items, response.audio_features);
+						
+						document.getElementById(this.id).innerHTML = songTemplate(full_track_list);
+						this.callback(full_track_list);
+					}
+				});
+			};
+
+			getSongFeatures(idList);
+
+			//console.log(this.full_track_list);
+
+		
+			
+		}
+
+		set setFullTrackList(list) {
+			this.full_track_list
+		}
+
+		
+	}
+
+
     if (error) {
-	alert('There was an error during the authentication');
+		alert('There was an error during the authentication');
     } else {
       	if (access_token) {
-	    // Short term artist request
+		
+			var shortTermArtists = new getArtists('short-term-artists', SHORT, 50, 0).getTop();
+
+			var mediumTermArtists = new getArtists('medium-term-artists', MEDIUM, 50, 0).getTop();
+
+			var longTermArtists = new getArtists('long-term-artists', LONG, 50, 0).getTop();
+
+
+			var shortTermTracks = new getTracks('short-term-tracks', SHORT, 50, 0).getTop();
+
+			var mediumTermTracks = new getTracks('medium-term-tracks', MEDIUM, 50, 0).getTop();
+
+			var longTermTracks = new getTracks('long-term-tracks', LONG, 50, 0, calcAudioFeatures).getTop();
+
+
+		/*
+		// Short term artist request
 	    getTop(access_token, ARTISTS, SHORT, 50, 0).done(function(response) {
 		document.getElementById('short-term-artists').innerHTML = artistTemplate(response);
-		$('#short-term-artists').hide();
+
 	    });
 
 	    // Medium term artist request
 	    getTop(access_token, ARTISTS, MEDIUM, 50, 0).done(function(response) {
 		document.getElementById('medium-term-artists').innerHTML = artistTemplate(response);
-		$('#medium-term-artists').hide();
 	    });
 	    
 	    // Long term artist request
 	    getTop(access_token, ARTISTS, LONG, 50, 0).done(function(response) {
-		document.getElementById('long-term-artists').innerHTML = artistTemplate(response);
-		$('#long-term-artists').hide();
+			document.getElementById('long-term-artists').innerHTML = artistTemplate(response);
 	    });
 	    
 	    // Short term tracks request
 	    getTop(access_token, TRACKS, SHORT, 50, 0).done(function(response) {
-		document.getElementById('short-term').innerHTML = songTemplate(response);
-		$('#short-term').hide();
+		document.getElementById('short-term-tracks').innerHTML = songTemplate(response);
+
 	    });
 
 	    // Medium term tracks request
 	    getTop(access_token, TRACKS, MEDIUM, 50, 0).done(function(response) {
-		document.getElementById('medium-term').innerHTML = songTemplate(response);
-		$('#medium-term').hide();
-	    });
+		document.getElementById('medium-term-tracks').innerHTML = songTemplate(response);
+	
+		});
+		*/
 
 	    // Long term tracks request (default view)
 	    getTop(access_token, TRACKS, LONG, 50, 0).done(function(response) {
-		document.getElementById('long-term').innerHTML = songTemplate(response);
-		
-		// combine ids from songs to call api to get song features
-		let topSongs = response.items;
-		let idList = '';
-		for (let i = 0; i < topSongs.length; i++) {
-		    idList += topSongs[i].id + ',';
-		}
+			// combine ids from songs to call api to get song features
+			//document.getElementById('long-term').innerHTML = songTemplate(response);
+			//console.log(response);
+			
+			let topSongs = response.items;
+			let idList = '';
+			for (let i = 0; i < topSongs.length; i++) {
+				idList += topSongs[i].id + ',';
+				fullTrackList = response;
+			}
 
-		// request to get song information
-		getSongFeatures(idList, access_token);
+			// request to get song information
+			getSongFeatures(idList, access_token);
 		
-		$('#login').hide();
-		$('#loggedin').show();
-	    });
+				
+			$('#login').hide();
+			$('#loggedin').show();
+		});
+	
 
 	} else {
 	    // render initial screen
@@ -165,23 +345,51 @@
 	    $('#loggedin').hide();
 	}
 
+	
+	
+
+	function getTogglerChecked() {
+			$('.list-chunk').removeClass("shown");
+			let track_album, duration;
+
+			document.querySelectorAll(".track-album").forEach(element => {
+				if (element.querySelector('input').checked) {
+					track_album = element.querySelector('input').dataset.getter;
+					element.classList.add("checked");
+				} else {
+					if (element.classList.contains("checked")) element.classList.remove("checked");
+				}
+			});
+
+			document.querySelectorAll(".duration").forEach(element => {
+				if (element.querySelector('input').checked) {
+					duration = element.querySelector('input').dataset.getter;
+					element.classList.add("checked");
+				} else {
+					if (element.classList.contains("checked")) element.classList.remove("checked");
+				}
+			});
+
+			let id = '#' + duration + track_album;
+			console.log(id);
+			$(id).addClass("shown");
+	}
+
+	getTogglerChecked();
+	document.querySelectorAll(".toggle-thinger").forEach(element => {
+		element.addEventListener('click', getTogglerChecked, false);
+	});
+
+	/*
 	// This can't be good code ... figure out better way later along with drop down
 	document.getElementById('short-toggle').addEventListener('click', function () {
-	    $('#short-term-artists').hide();
-	    $('#medium-term-artists').hide();
-	    $('#long-term-artists').hide();
+	    $('.list-chunk').hide();
 	    $('#short-term').show();
-	    $('#medium-term').hide();
-	    $('#long-term').hide();
 	});
 	
 	document.getElementById('medium-toggle').addEventListener('click', function () {
-	    $('#short-term-artists').hide();
-	    $('#medium-term-artists').hide();
-	    $('#long-term-artists').hide();
-	    $('#short-term').hide();
+		$('.list-chunk').hide();
 	    $('#medium-term').show();
-	    $('#long-term').hide();
 	});
 
 	document.getElementById('long-toggle').addEventListener('click', function () {
@@ -219,5 +427,6 @@
 	    $('#medium-term').hide();
 	    $('#long-term').hide();
 	});
+	*/
     }
 })();

@@ -1,0 +1,250 @@
+
+/*=========================================
+MAIN
+==========================================*/
+
+body {
+    background-color: #1E1D1E;
+}
+
+.chunk {
+    margin-top: 80px;
+}
+
+hr {
+    background-color: transparent;
+    border-top: 1px solid #414042;
+}
+
+.tick {
+    width: 50px;
+    margin: 0;
+}
+
+.vertical-tick {
+    margin: 0 7px;
+    display: inline-block;
+    height: 25px;
+    width: 1px;
+    background-color: #414042;
+    vertical-align: middle;
+}
+
+
+/*=========================================
+TYPOGRAPHY
+==========================================*/
+
+h1, h2, h3, h4, h5 {
+    font-family: 'Playfair Display', serif;
+    color: #808285;
+}
+
+.navbar-brand {
+    font-family: 'Playfair Display', serif;
+    color: #808285;
+    font-size: 12px;
+}
+
+.title-col h2 {
+    font-size: 18px;
+    margin-top: 0;
+}
+
+p, li, td, th {
+    font-family: 'Lato', sans-serif;
+    color: #D1D3D4;
+}
+
+th {
+    font-size: 12px;
+}
+
+
+.lg-label {
+   font-size: 18px;
+   text-transform: uppercase;
+   letter-spacing: 0.2em; 
+}
+
+.sm-label {
+    margin: 0;
+    font-size: 14px;
+    color: #D1D3D4;
+}
+
+.sm-sub-label {
+    font-size: 9px;
+    margin: 0;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: #A7A9AC;
+}
+
+.table > thead > tr > th {
+    border: none;
+    color: #808285;
+    font-size: 12px;
+}
+
+.table > tbody > tr > td {
+    border-top: 1px solid rgba(64, 64, 64, 0.5);
+    vertical-align: middle;
+}
+
+.table > tbody > tr > td:first-child {
+    border: none;
+}
+
+label {
+    color: #BEBEBF;
+}
+
+label:hover {
+    color: #D1D3D4;
+}
+
+
+/*=========================================
+BUTTONS 'N OTHER COMPONENTS
+==========================================*/
+
+.bttn {
+    display: flex;
+    border-radius: 15px;
+    height: 30px;
+    font-size: 10px;
+    text-transform: uppercase;
+    padding: 0 17px;
+    letter-spacing: 0.2em;
+    color: rgba(255,255,255,0.8);
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 2px 6px rgba(0,0,0,.1);
+    transition: all .25s ease-in-out;
+    cursor: pointer;
+    background: linear-gradient(90deg, rgba(218, 28, 92, 1) 0%, rgba(238, 42, 123, 1) 100%);
+}
+
+.bttn-group {
+    display: inline-flex;
+    margin-bottom: 15px;
+}
+
+.toggle-thinger {
+    color: #808285;
+    border-radius: 20px !important;
+    background: transparent;
+    box-shadow: none;
+}
+
+.toggle-thinger:hover {
+    color: #D1D3D4;
+}
+
+.toggle-thinger.checked {
+    box-shadow: inset 0 2px 6px rgba(0,0,0,.1);
+    color: rgba(255,255,255,0.8);
+    border-radius: 20px !important;
+    background: rgba(218, 28, 92, 1);
+}
+
+.toggle-thinger input {
+    display: none;
+}
+
+
+
+/*=========================================
+LOG IN PAGE
+==========================================*/
+
+
+
+/*=========================================
+LOGGED IN
+==========================================*/
+
+.features-container {
+    min-height: 400px;
+}
+
+.features-list-row {
+    margin-bottom: 30px;
+}
+
+.features-list-row .f-label {
+    display: flex;
+    align-items: center;
+}
+
+.features-list-row hr {
+    margin: 0 0 8px 10px;
+    flex: 1;
+}
+
+.scale-container {
+    position: relative;
+    width: 100%;
+}
+
+.scale {
+    width: 100%;
+    border-radius: 13px;
+    height: 26px;
+    display: flex;
+    justify-content: space-between;
+    padding: 0 10px;
+    align-items: center;
+    background: linear-gradient(90deg, rgba(218, 28, 92, 1) 0%, rgba(214, 30, 94, 1) 14.8%, rgba(203, 38, 102, 1) 28.48%, rgba(184, 51, 115, 1) 41.73%, rgba(158, 68, 132, 1) 54.71%, rgba(124, 91, 155, 1) 67.49%, rgba(82, 119, 184, 1) 80.13%, rgba(34, 151, 216, 1) 92.42%, rgba(0, 174, 239, 1) 100%);
+}
+
+.scale span {
+    font-size: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: rgba(255,255,255,0.8);
+}
+
+.scale-tick {
+    height: 32px;
+    width: 2px;
+    background-color: rgba(255,255,255,0.8);
+    position: absolute;
+    top: -3px;
+}
+
+.toggle-thinger {
+
+}
+
+.track-album {
+
+}
+
+.duration {
+
+}
+
+.history-container {
+    padding-top: 70px;
+    padding-bottom: 140px;
+    background-color: #282728;
+}
+
+.list-chunk {
+    min-height: 300px;
+    display: none;
+}
+
+.shown {
+    display: block;
+}
+
+.album-thumb {
+    height: 40px;
+    width: 40px;
+    border-radius: 3px;
+    box-shadow: 0 2px 6px rgba(0,0,0,.1);
+}
+

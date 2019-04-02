@@ -52,7 +52,6 @@ app.get('/login', function(req, res) {
 
     let state = generateRandomString(16);
     res.cookie(stateKey, state);
-
     // your application requests authorization
     let scope = 'user-read-private user-read-email user-top-read';
     res.redirect('https://accounts.spotify.com/authorize?' +
@@ -69,30 +68,36 @@ app.get('/callback', function(req, res) {
 
     // your application requests refresh and access tokens
     // after checking the state parameter
-
+	
     let code = req.query.code || null;
     let state = req.query.state || null;
     let storedState = req.cookies ? req.cookies[stateKey] : null;
 
     if (state === null || state !== storedState) {
-	res.redirect('/#' +
-		     querystring.stringify({
-			 error: 'state_mismatch'
-		     }));
-    } else {
-	res.clearCookie(stateKey);
-	let authOptions = {
-	    url: 'https://accounts.spotify.com/api/token',
-	    form: {
-		code: code,
-		redirect_uri: redirect_uri,
-		grant_type: 'authorization_code'
-	    },
-	    headers: {
-		'Authorization': 'Basic ' + (new Buffer(client_id + ':' + client_secret).toString('base64'))
-	    },
-	    json: true
+		res.redirect('/#' +
+			querystring.stringify({
+				error: 'state_mismatch'
+			})
+		);
+    } else { 
+		res.clearCookie(stateKey);
+		
+		let authOptions = {
+			url: 'https://accounts.spotify.com/api/token',
+			form: {
+			code: code,
+			redirect_uri: redirect_uri,
+			grant_type: 'authorization_code'
+			},
+			headers: {
+			'Authorization': 'Basic ' + (new Buffer(client_id + ':' + client_secret).toString('base64'))
+			},
+			json: true
 	};
+
+	
+
+
 
 	request.post(authOptions, function(error, response, body) {
 	    if (!error && response.statusCode === 200) {
@@ -114,12 +119,18 @@ app.get('/callback', function(req, res) {
 		    console.log('==================================================');
 		});
 
+		res.cookie("access_token", access_token);
+		res.cookie("refresh_token", refresh_token);
+
 		// we can also pass the token to the browser to make requests from there
-		res.redirect('/#' +
+		// just finna try and set them as cookies and grab em them that way
+		/* #' + 
 			     querystring.stringify({
 				 access_token: access_token,
 				 refresh_token: refresh_token
-			     }));
+				 }));
+		 */
+		res.redirect('/');
 	    } else {
 		res.redirect('/#' +
 			     querystring.stringify({
@@ -128,6 +139,12 @@ app.get('/callback', function(req, res) {
 	    }
 	});
     }
+});
+
+app.get('/logout', function(req, res) {
+	res.clearCookie("access_token");
+	res.clearCookie("refresh_token");
+	res.redirect('/');
 });
 
 app.get('/refresh_token', function(req, res) {
